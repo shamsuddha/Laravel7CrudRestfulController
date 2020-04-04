@@ -21,7 +21,7 @@ class PostController extends Controller
     public function store(Request $request)
     {
         $input = $request->validate([
-             'title' => 'required',
+            'title' => 'required',
             'description' => 'required | min:5'
         ]);
         //Log::info($input);
@@ -30,29 +30,42 @@ class PostController extends Controller
 
     }
 
+
+    public function show($id)
+    {
+        $post = Post::findorFail($id);
+
+        return view('Post.show', compact('post'));
+
+    }
+
+
     public function edit($id)
     {
-        $editPost = Post::findorFail($id);
-        return view('Post.editPost',compact('editPost'));
+        $post = Post::findorFail($id);
+        return view('Post.edit', compact('post'));
     }
+
+
     public function update(Request $request, $id)
     {
-        $brand_name         =   $request->brand_name;
-        $find_catagory      =   Post::findOrFail($id);
-
-        $update_brand_name  =   $find_catagory->update([
-            'brand_name'    =>  trim(ucwords(strtolower($brand_name)))
+        $input = $request->validate([
+            'title' => 'required',
+            'description' => 'required | min:5'
         ]);
+        $post =  Post::findOrFail($id);
 
-        return redirect('brand')->with('succses_message_for_Update','Item has been updated successfully.');
+        $post ->update($input);
+
+        return redirect('posts')->with('success_message_for_Update','Item has been updated successfully.');
     }
 
 
     public function destroy($id)
     {
-        $deletebrand_name = Post::findorFail($id);
-        $deletebrand_name -> Delete();
-        return redirect('brand')->with('Delete_message_for_delete','SuccessFully Deleted');
+        $post = Post::findorFail($id);
+        $post  -> Delete();
+        return redirect('posts')->with('Delete_message_for_delete','SuccessFully Deleted');
     }
 
 }
